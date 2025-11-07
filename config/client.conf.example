@@ -1,0 +1,39 @@
+# Seafile Client Configuration File
+# Copy this file to client.conf and modify as needed
+
+[server]
+# 服务器基础URL
+base_url=https://your-server.com
+# API端点路径
+api_endpoint=/api/v1
+
+[client]
+# 自动登录
+auto_login=false
+# 记住密码
+remember_password=false
+# 下载目录
+download_directory=~/Downloads/Seafile
+
+[network]
+# 连接超时时间（秒）
+timeout=30
+# 重试次数
+retry_count=3
+# 最大并发下载数
+max_concurrent_downloads=3
+
+[ui]
+# 界面语言 (zh_CN, en_US)
+language=zh_CN
+# 主题 (default, dark)
+theme=default
+
+[logging]
+# 日志级别 (DEBUG, INFO, WARNING, ERROR)
+log_level=INFO
+# 日志文件最大大小（MB）
+max_log_size=10
+# 保留的日志文件数量
+max_log_files=5
+

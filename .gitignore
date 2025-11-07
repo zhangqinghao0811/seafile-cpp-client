@@ -1,0 +1,164 @@
+# Build directories
+build/
+build-*/
+out/
+cmake-build-*/
+
+# IDE files
+.vscode/
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.sln.docstates.json
+
+# CLion
+.idea/
+cmake-build-debug/
+cmake-build-release/
+
+# Qt Creator
+CMakeLists.txt.user*
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Ninja
+.ninja_deps
+.ninja_log
+
+# Conan
+conandata.txt
+conaninfo.txt
+conanbuildinfo.*
+conan.lock
+
+# vcpkg
+vcpkg_installed/
+
+# Package managers
+packages/
+.nuget/
+
+# Logs
+*.log
+logs/
+
+# Configuration files (keep examples)
+config/client.conf
+*.conf
+!*.conf.example
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Patch files
+*.patch
+*.diff
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Local development
+local/
+tmp/
+temp/
+

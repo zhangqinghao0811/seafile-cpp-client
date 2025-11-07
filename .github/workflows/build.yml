@@ -1,0 +1,100 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Release]
+        include:
+          - os: ubuntu-latest
+            build_type: Debug
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+        sudo apt-get install -y libwxgtk3.0-gtk3-dev libcurl4-openssl-dev
+        sudo apt-get install -y pkg-config
+
+    - name: Install dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew update
+        brew install cmake wxwidgets curl pkg-config
+
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        # Install vcpkg dependencies
+        vcpkg install wxwidgets:x64-windows
+        vcpkg install curl:x64-windows
+        vcpkg integrate install
+
+    - name: Configure CMake (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+    - name: Build
+      run: |
+        cmake --build build --config ${{ matrix.build_type }} -j
+
+    - name: Test
+      working-directory: build
+      run: |
+        ctest --output-on-failure -C ${{ matrix.build_type }}
+
+    - name: Upload build artifacts
+      if: matrix.build_type == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: seafile-client-${{ runner.os }}
+        path: |
+          build/SeafileClient*
+          build/Release/SeafileClient*
+        retention-days: 7
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      
+    - name: Create release package
+      run: |
+        mkdir -p release
+        cp -r seafile-client-* release/ || true
+        tar -czf seafile-client-release.tar.gz release/
+        
+    - name: Upload release package
+      uses: actions/upload-artifact@v4
+      with:
+        name: seafile-client-release
+        path: seafile-client-release.tar.gz
+        retention-days: 30
+
