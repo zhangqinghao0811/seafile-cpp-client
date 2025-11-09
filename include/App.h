@@ -98,4 +98,3 @@ inline App& GetApp()
 
 // 声明应用程序实例
 wxDECLARE_APP(App);
-

@@ -23,7 +23,7 @@ bool App::OnInit()
         }
 
         // 初始化日志系统
-        std::string logPath = m_configManager->GetLogPath();
+        std::string logPath = m_configManager->getLogPath();
         if (!Logger::getInstance().initialize(logPath)) {
             wxMessageBox("日志系统初始化失败", "错误", wxOK | wxICON_ERROR);
             return false;
@@ -82,7 +82,7 @@ bool App::InitializeConfig()
 {
     try {
         m_configManager = std::make_unique<ConfigManager>();
-        return m_configManager->Initialize();
+        return m_configManager->initialize();
     }
     catch (const std::exception& e) {
         wxMessageBox(wxString::Format("配置管理器初始化失败: %s", e.what()),
@@ -95,13 +95,9 @@ bool App::InitializeManagers()
 {
     try {
         // 创建认证管理器
-        m_authManager = std::make_unique<AuthManager>();
+        m_authManager = std::make_unique<AuthManager>(*m_configManager);
         
-        // 设置服务器配置
-        std::string serverUrl = m_configManager->GetServerUrl();
-        if (!serverUrl.empty()) {
-            m_authManager->SetServerUrl(serverUrl);
-        }
+        // 认证管理器已通过构造函数获得配置管理器引用
 
         return true;
     }
@@ -124,4 +120,3 @@ bool App::CreateMainWindow()
         return false;
     }
 }
-
