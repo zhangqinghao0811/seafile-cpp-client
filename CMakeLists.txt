@@ -31,7 +31,6 @@ include_directories(${CMAKE_SOURCE_DIR}/third_party)
 
 # 源文件
 set(SOURCES
-    src/main.cpp
     src/App.cpp
     
     # 框架
@@ -182,4 +181,3 @@ endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "C++ standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
-
