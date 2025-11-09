@@ -11,6 +11,7 @@
 #include "App.h"
 #include "managers/AuthManager.h"
 #include "utils/Logger.h"
+#include <wx/artprov.h>
 
 // 事件表
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -148,8 +149,8 @@ void MainFrame::CreateMainComponents()
 void MainFrame::UpdateUIState()
 {
     AuthManager& authManager = GetApp().GetAuthManager();
-    bool isLoggedIn = authManager.IsLoggedIn();
-    bool isMember = authManager.IsMember();
+    bool isLoggedIn = authManager.isLoggedIn();
+    bool isMember = authManager.isMember();
 
     // 更新菜单状态
     m_fileMenu->Enable(ID_LOGIN, !isLoggedIn);
@@ -163,7 +164,7 @@ void MainFrame::UpdateUIState()
 
     // 更新状态栏
     if (isLoggedIn) {
-        wxString userInfo = authManager.GetCurrentUser();
+        wxString userInfo = authManager.getCurrentUsername();
         if (isMember) {
             userInfo += " (会员)";
         } else {
@@ -205,7 +206,7 @@ void MainFrame::OnLogin(wxCommandEvent& WXUNUSED(event))
 void MainFrame::OnLogout(wxCommandEvent& WXUNUSED(event))
 {
     AuthManager& authManager = GetApp().GetAuthManager();
-    authManager.Logout();
+    authManager.logout();
     UpdateUIState();
     m_statusBar->SetStatusText("已注销", 0);
     Logger::getInstance().info("用户已注销");
@@ -238,4 +239,3 @@ void MainFrame::OnClose(wxCloseEvent& event)
     
     event.Skip();
 }
-

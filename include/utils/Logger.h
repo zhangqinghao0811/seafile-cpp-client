@@ -98,23 +98,32 @@ private:
      */
     void writeLog(LogLevel level, const std::string& message);
 
-    /**
-     * @brief 获取当前时间戳
-     * @return 格式化的时间戳字符串
-     */
-    std::string getCurrentTimestamp();
+
 
     /**
      * @brief 获取日志级别字符串
      * @param level 日志级别
      * @return 日志级别字符串
      */
-    std::string getLevelString(LogLevel level);
+    std::string getLevelString(LogLevel level) const;
+
+    /**
+     * @brief 获取当前时间戳字符串
+     * @return 格式化的时间戳字符串
+     */
+    std::string getCurrentTimeString() const;
 
 private:
+    /**
+     * @brief 内部日志记录方法
+     * @param level 日志级别
+     * @param message 日志消息
+     */
+    void log(LogLevel level, const std::string& message);
+
     std::ofstream m_logFile;        ///< 日志文件流
     LogLevel m_currentLevel;        ///< 当前日志级别
     std::mutex m_mutex;             ///< 线程同步互斥锁
     bool m_initialized;             ///< 初始化标志
+    std::string m_filename;         ///< 日志文件名
 };
-

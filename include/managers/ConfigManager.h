@@ -92,6 +92,24 @@ public:
      * @return std::string 配置文件完整路径
      */
     std::string getConfigFilePath() const;
+    
+    /**
+     * @brief 获取日志文件路径
+     * @return std::string 日志文件完整路径
+     */
+    std::string getLogPath() const;
+    
+    /**
+     * @brief 获取服务器URL
+     * @return std::string 服务器URL
+     */
+    std::string getServerUrl() const;
+    
+    /**
+     * @brief 初始化配置管理器
+     * @return true 初始化成功，false 初始化失败
+     */
+    bool initialize();
 
 private:
     /**
@@ -112,4 +130,3 @@ private:
     std::map<std::string, std::string> m_config;  ///< 配置数据存储
     std::string m_configFilePath;                 ///< 配置文件路径
 };
-

@@ -253,3 +253,22 @@ std::string ConfigManager::getAppDataDir() const
     return appDataDir;
 }
 
+std::string ConfigManager::getLogPath() const
+{
+    return getAppDataDir() + "/seafile-client.log";
+}
+
+std::string ConfigManager::getServerUrl() const
+{
+    return getString("server", "base_url", "");
+}
+
+bool ConfigManager::initialize()
+{
+    // 尝试加载现有配置
+    if (!loadConfig()) {
+        // 如果加载失败，创建默认配置
+        createDefaultConfig();
+    }
+    return true;
+}
