@@ -50,7 +50,7 @@ void Logger::setLevel(LogLevel level)
 
 void Logger::debug(const std::string& message)
 {
-    log(LogLevel::DEBUG, message);
+    log(LogLevel::DEBUG_LEVEL, message);
 }
 
 void Logger::info(const std::string& message)
@@ -65,7 +65,7 @@ void Logger::warning(const std::string& message)
 
 void Logger::error(const std::string& message)
 {
-    log(LogLevel::ERROR, message);
+    log(LogLevel::ERROR_LEVEL, message);
 }
 
 void Logger::log(LogLevel level, const std::string& message)
@@ -98,11 +98,11 @@ void Logger::close()
 std::string Logger::getLevelString(LogLevel level) const
 {
     switch (level) {
-        case LogLevel::DEBUG:   return "DEBUG";
-        case LogLevel::INFO:    return "INFO ";
-        case LogLevel::WARNING: return "WARN ";
-        case LogLevel::ERROR:   return "ERROR";
-        default:                return "UNKN ";
+        case LogLevel::DEBUG_LEVEL: return "DEBUG";
+        case LogLevel::INFO:        return "INFO ";
+        case LogLevel::WARNING:     return "WARN ";
+        case LogLevel::ERROR_LEVEL: return "ERROR";
+        default:                    return "UNKN ";
     }
 }
 
@@ -134,7 +134,7 @@ void Logger::writeLog(LogLevel level, const std::string& message)
               << message << std::endl;
     
     // 对于错误级别，同时输出到控制台
-    if (level >= LogLevel::ERROR) {
+    if (level >= LogLevel::ERROR_LEVEL) {
         std::cerr << "[" << getCurrentTimeString() << "] "
                   << "[" << getLevelString(level) << "] "
                   << message << std::endl;
@@ -145,4 +145,3 @@ void Logger::writeLog(LogLevel level, const std::string& message)
         m_logFile.flush();
     }
 }
-

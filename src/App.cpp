@@ -1,3 +1,8 @@
+/**
+ * @file App.cpp
+ * @brief 主应用程序类实现
+ */
+
 #include "App.h"
 #include "frames/MainFrame.h"
 #include "managers/AuthManager.h"
@@ -5,51 +10,43 @@
 #include "utils/Logger.h"
 #include "utils/ErrorHandler.h"
 
-App::App()
-    : m_mainFrame(nullptr)
-    , m_authManager(nullptr)
-    , m_configManager(nullptr)
-{
-}
-
-App::~App()
-{
-    Logger::getInstance().info("应用程序退出");
-}
+// 实现应用程序实例
+wxIMPLEMENT_APP(App);
 
 bool App::OnInit()
 {
-    Logger::getInstance().info("开始初始化应用程序");
-    
-    // 设置应用程序名称
-    SetAppName("SeafileClient");
-    SetAppDisplayName("Seafile客户端");
-    SetVendorName("Your Company");
-    
     try {
-        // 初始化配置
+        // 初始化配置系统
         if (!InitializeConfig()) {
-            Logger::getInstance().error("配置初始化失败");
+            wxMessageBox("配置系统初始化失败", "错误", wxOK | wxICON_ERROR);
             return false;
         }
-        
+
+        // 初始化日志系统
+        std::string logPath = m_configManager->GetLogPath();
+        if (!Logger::getInstance().initialize(logPath)) {
+            wxMessageBox("日志系统初始化失败", "错误", wxOK | wxICON_ERROR);
+            return false;
+        }
+
+        Logger::getInstance().info("应用程序启动...");
+
         // 初始化管理器
         if (!InitializeManagers()) {
             Logger::getInstance().error("管理器初始化失败");
             return false;
         }
-        
+
         // 创建主窗口
         if (!CreateMainWindow()) {
             Logger::getInstance().error("主窗口创建失败");
             return false;
         }
-        
+
         Logger::getInstance().info("应用程序初始化完成");
         return true;
-        
-    } catch (const std::exception& e) {
-        Logger::getInstance().error("应用程序初始化异常: " + std::string(e.what()));
+    }
+    catch (const std::exception& e) {
         ErrorHandler::getInstance().handleException(e);
         return false;
     }
@@ -57,32 +54,39 @@ bool App::OnInit()
 
 int App::OnExit()
 {
-    Logger::getInstance().info("应用程序正在退出");
-    
+    Logger::getInstance().info("应用程序正在退出...");
+
     // 清理资源
     m_authManager.reset();
     m_configManager.reset();
-    
+
+    // 关闭日志系统
+    Logger::getInstance().close();
+
     return wxApp::OnExit();
+}
+
+void App::ShowErrorMessage(const wxString& message, const wxString& title)
+{
+    wxMessageBox(message, title, wxOK | wxICON_ERROR);
+    Logger::getInstance().error(message.ToStdString());
+}
+
+void App::ShowInfoMessage(const wxString& message, const wxString& title)
+{
+    wxMessageBox(message, title, wxOK | wxICON_INFORMATION);
+    Logger::getInstance().info(message.ToStdString());
 }
 
 bool App::InitializeConfig()
 {
     try {
         m_configManager = std::make_unique<ConfigManager>();
-        
-        // 加载配置文件
-        if (!m_configManager->loadConfig()) {
-            Logger::getInstance().warning("配置文件加载失败，使用默认配置");
-            // 创建默认配置
-            m_configManager->createDefaultConfig();
-        }
-        
-        Logger::getInstance().info("配置初始化成功");
-        return true;
-        
-    } catch (const std::exception& e) {
-        Logger::getInstance().error("配置初始化异常: " + std::string(e.what()));
+        return m_configManager->Initialize();
+    }
+    catch (const std::exception& e) {
+        wxMessageBox(wxString::Format("配置管理器初始化失败: %s", e.what()),
+                     "错误", wxOK | wxICON_ERROR);
         return false;
     }
 }
@@ -90,17 +94,19 @@ bool App::InitializeConfig()
 bool App::InitializeManagers()
 {
     try {
-        // 初始化认证管理器
-        m_authManager = std::make_unique<AuthManager>(*m_configManager);
+        // 创建认证管理器
+        m_authManager = std::make_unique<AuthManager>();
         
-        // 尝试从本地存储恢复登录状态
-        m_authManager->restoreSession();
-        
-        Logger::getInstance().info("管理器初始化成功");
+        // 设置服务器配置
+        std::string serverUrl = m_configManager->GetServerUrl();
+        if (!serverUrl.empty()) {
+            m_authManager->SetServerUrl(serverUrl);
+        }
+
         return true;
-        
-    } catch (const std::exception& e) {
-        Logger::getInstance().error("管理器初始化异常: " + std::string(e.what()));
+    }
+    catch (const std::exception& e) {
+        ShowErrorMessage(wxString::Format("管理器初始化失败: %s", e.what()));
         return false;
     }
 }
@@ -108,33 +114,14 @@ bool App::InitializeManagers()
 bool App::CreateMainWindow()
 {
     try {
-        // 创建主窗口
         m_mainFrame = new MainFrame();
-        
-        // 设置为顶级窗口
-        SetTopWindow(m_mainFrame);
-        
-        // 显示主窗口
         m_mainFrame->Show(true);
-        
-        Logger::getInstance().info("主窗口创建成功");
+        SetTopWindow(m_mainFrame);
         return true;
-        
-    } catch (const std::exception& e) {
-        Logger::getInstance().error("主窗口创建异常: " + std::string(e.what()));
+    }
+    catch (const std::exception& e) {
+        ShowErrorMessage(wxString::Format("主窗口创建失败: %s", e.what()));
         return false;
     }
-}
-
-void App::ShowError(const wxString& message, const wxString& title)
-{
-    Logger::getInstance().error(message.ToStdString());
-    wxMessageBox(message, title, wxOK | wxICON_ERROR);
-}
-
-void App::ShowInfo(const wxString& message, const wxString& title)
-{
-    Logger::getInstance().info(message.ToStdString());
-    wxMessageBox(message, title, wxOK | wxICON_INFORMATION);
 }
 
