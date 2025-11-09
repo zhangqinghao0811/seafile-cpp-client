@@ -10,11 +10,11 @@
 #include <wx/wx.h>
 #include <wx/app.h>
 #include <memory>
+#include "managers/AuthManager.h"
+#include "managers/ConfigManager.h"
 
 // 前向声明
 class MainFrame;
-class AuthManager;
-class ConfigManager;
 
 /**
  * @brief 主应用程序类
@@ -87,6 +87,9 @@ private:
     std::unique_ptr<ConfigManager> m_configManager;   ///< 配置管理器
 };
 
+// 声明应用程序实例
+wxDECLARE_APP(App);
+
 /**
  * @brief 获取应用程序实例
  * @return 应用程序实例引用
@@ -95,6 +98,3 @@ inline App& GetApp()
 {
     return static_cast<App&>(wxGetApp());
 }
-
-// 声明应用程序实例
-wxDECLARE_APP(App);
